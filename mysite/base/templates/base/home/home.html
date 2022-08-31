@@ -1,0 +1,11 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'style.css' %}" />
+  <!--CTA-->
+  <h1>Hello world!asas</h1>
+  {% for i in stockOptions %}
+    <p>{{i.id}} - <a href="{% url 'selected-stock' i.code %}">{{i.name}}</a></p>
+  {% endfor %}
+
+{% endblock %}
