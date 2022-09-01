@@ -1,4 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+
+from .forms import RegisterForm
+from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm 
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+#from .models import User
+#from .forms import UserForm, MyUserCreationForm
 import requests
 
 
@@ -35,10 +46,37 @@ def home(request):
     return render(request, 'base/home/home.html', {'stockOptions':stockOptions})
 
 def login(request):
-    return render(request, 'base/login/login.html')
-
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                login(request, user)
+                messages.info(request, f"You are now logged in with {email}.")
+                return redirect("base:home")
+            else:
+                messages.error(request,"Invalid email or password.")
+        else:
+            messages.error(request,"Invalid email or password.")
+    form = AuthenticationForm()
+    return render(request=request, template_name="base/login/login.html", context={"login_form":form})
+   
 def register(request):
-    return render(request, 'base/register/register.html')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            print(user)
+            return redirect('home')
+    else:
+        form = RegisterForm()
+    return render(request, 'base/register/register.html', {'form': form})
 
     
 def selectedStock(request,pk):

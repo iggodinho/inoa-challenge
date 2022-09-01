@@ -4,5 +4,15 @@
 
   <!--CTA-->
   <h1>Login</h1>
+  <form method="POST">
+    {% csrf_token %}
+    <label>Email:</label> 
+    <input type="text" name="email" placeholder="Digite seu email aqui">
 
+    <label>Senha:</label> 
+    <input type="text" name="password" placeholder="Digite sua senha aqui">
+
+    <button type="submit">Logar</button>
+    <p>Don't have an account? <a href="/register">Create an account</a>.</p>
+  </form>
 {% endblock %}
