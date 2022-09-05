@@ -1,103 +1,205 @@
+from hashlib import new
+import uuid
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 
-from .forms import RegisterForm
+from base.models import Stock
+from .forms import CreateUserForm
 from django.contrib.auth import login
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-#from .models import User
-#from .forms import UserForm, MyUserCreationForm
+from .forms import CreateUserForm
+
 import requests
 
-
-stockOptions=[
-    {'id':1,'name':'Petrobras','code':'PETR4.SAO'},
-    {'id':2,'name':'Microsoft','code':'MSFT34.SAO'},
-    {'id':3,'name':'IBM','code':'IBMB34.SAO'},
-    {'id':4,'name':'Apple','code':'AAPL34.SAO'},
-    {'id':5,'name':'Netflix','code':'NFLX34.SAO'},
-    {'id':6,'name':'Opera','code':'OPERA34.SAO'},
-    {'id':7,'name':'Motorola','code':'M1SI34.SAO'},
-    {'id':8,'name':'Unilever','code':'ULEV34.SAO'},
-    {'id':9,'name':'Coca-Cola','code':'COCA34.SAO'},
-    {'id':10,'name':'Smartfit','code':'SMFT3.SAO'},
-    {'id':11,'name':'Bradesco','code':'BCIA11.SAO'},
-    {'id':12,'name':'Nike','code':'NIKE34.SAO'},
-    {'id':13,'name':'XP','code':'XPBR31.SAO'},
-    {'id':14,'name':'Azul','code':'AZUL4.SAO'},
-    {'id':15,'name':'Ambev','code':'ABEV3.SAO'},
-    {'id':16,'name':'Magazine Luiza','code':'MGLU3.SAO'},
-    {'id':17,'name':'Uber','code':'U1BE34.SAO'},
-    {'id':18,'name':'Paramount','code':'C1BS34.SAO'},
-    {'id':19,'name':'McDonalds','code':'MCDC34.SAO'},
-    {'id':20,'name':'Gerdau','code':'GGBR3.SAO'},
-
+stock_options=[
+    {'id':1,'name':'Gerdau','code':'GGB','image_file':'gerdau.png'},
+    {'id':2,'name':'Microsoft','code':'MSFT','image_file':'microsoftt.png'},
+    {'id':3,'name':'IBM','code':'IBM','image_file':'ibmm.png'},
+    {'id':4,'name':'Apple','code':'AAPL','image_file':'apple.png'},
+    {'id':5,'name':'Netflix','code':'NFLX','image_file':'netflix.png'},
+    {'id':6,'name':'Opera','code':'OPRA','image_file':'opera.png'},
+    {'id':7,'name':'Motorola','code':'MSI','image_file':'motorola-logo.png'},
+    {'id':8,'name':'Unilever','code':'UL','image_file':'uni.svg'},
+    {'id':9,'name':'Coca-Cola','code':'COKE','image_file':'coca.png'},
+    {'id':10,'name':'McDonalds','code':'MCD','image_file':'mcdonaldss.png'},
+    {'id':11,'name':'Amazon','code':'AMZN','image_file':'amazon.png'},
+    {'id':12,'name':'Nike','code':'NKE','image_file':'nik.png'},
+    {'id':13,'name':'XP','code':'XP','image_file':'xp.png'},
+    {'id':14,'name':'Azul','code':'AZUL','image_file':'azul.png'},
+    {'id':15,'name':'Ambev','code':'ABEV','image_file':'ambev.png'},
+    {'id':16,'name':'Warner Bros','code':'WBD','image_file':'warner.png'},
+    {'id':17,'name':'Uber','code':'UBER','image_file':'uberr.png'},
+    {'id':18,'name':'Paramount','code':'PARAA','image_file':'paramountt.png'},
     ]
 
 key='WJJEOQROMVPXCG9X'
 
 
 
-
+@login_required(login_url='login')
 def home(request):
-    return render(request, 'base/home/home.html', {'stockOptions':stockOptions})
+    if 'time' not in request.session:
+        request.session['time'] = '5min'
+    if 'stock_list' not in request.session:
+        request.session['stock_list']= []    
+    context = {'stock_options':stock_options}  
+    return render(request, 'base/home/home.html', context)
 
-def login(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f"You are now logged in with {email}.")
-                return redirect("base:home")
-            else:
-                messages.error(request,"Invalid email or password.")
-        else:
-            messages.error(request,"Invalid email or password.")
-    form = AuthenticationForm()
-    return render(request=request, template_name="base/login/login.html", context={"login_form":form})
+def loginPage(request):
+    
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        if request.method == 'POST':
+                username = request.POST.get('username')
+                password =request.POST.get('password')
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect('home')
+                else:
+                    messages.info(request, 'Nome de usuário ou senha incorreta')
+        context = {}
+    return render(request, "base/login/login.html", context)
    
 def register(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            print(user)
-            return redirect('home')
+    if request.user.is_authenticated:
+        
+        return redirect('home')
     else:
-        form = RegisterForm()
-    return render(request, 'base/register/register.html', {'form': form})
+        form=CreateUserForm()
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user = form.cleaned_data.get('username')
+                messages.success(request, 'Conta criada com sucesso,' + user + "!")
+                return redirect('login')
+                
+        context = {'form':form}
+            
+    return render(request, 'base/register/register.html', context)
 
-    
-def selectedStock(request,pk):
-    selectedStock=None
-    for i in stockOptions:
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
+
+@login_required(login_url='login')    
+def stock(request,pk):
+    selected_stock=None
+    for i in stock_options:
         if i['code']==str(pk):
-            selectedStock=i
-
-    stockCode=selectedStock['code']
-    url = 'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol='+stockCode+'&apikey={key}' 
-   
+            selected_stock=i
+    stock_code=selected_stock['code']
+    time= request.session['time']
+    url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock_code+'&interval='+time+'&outputsize=compact&apikey='+key 
     r = requests.get(url)
     data = r.json()
-    stockInfo={'info':selectedStock,'alpha':data['Global Quote']}
-    newStockInfo={'symbol':stockInfo['alpha']['01. symbol'],
-    'open':stockInfo['alpha']['02. open'],'high':stockInfo['alpha']['03. high'],'low':stockInfo['alpha']['04. low'],
-    'price':stockInfo['alpha']['05. price'],'volume':stockInfo['alpha']['06. volume'],
-    'latestTradingDay':stockInfo['alpha']['07. latest trading day'],'previousClose':stockInfo['alpha']['08. previous close'],
-    'change':stockInfo['alpha']['09. change'],'changePercent':stockInfo['alpha']['10. change percent']}
-    stockInfo["alpha"]=newStockInfo
-    
-    context={"selectedStock":stockInfo}
-    return render(request, 'base/selected_stock/selectedstock.html',context)
+    new_stock_info=data['Time Series ('+time+')']
+    values=list(new_stock_info.values())[0]
+    alpha={'open':values['1. open'],'high':values['2. high'],'low':values['3. low'],'close':values['4. close']}
+    time=time.replace('min','')
+    if request.method == 'POST':
+        if 'stock_list' in request.session:
+            stock=request.POST.get('button')
+            stock_list=request.session['stock_list']
+            if stock in stock_list:
+                stock_list.remove(stock)
+                request.session['stock_list']=stock_list
+            else:
+                stock_list.append(stock)
+                request.session['stock_list']=stock_list
+        else:
+            stock=request.POST.get('button')
+            stock_list=[]
+            stock_list.append(stock)
+            request.session['stock_list']=stock_list
+    stock_info={'info':selected_stock,'alpha':alpha, 'data':data, "time":time[:2], 'is_added':selected_stock['code'] in request.session['stock_list'], 'size':len(request.session['stock_list'])}
+    context={"selected_stock":stock_info}
+    return render(request, 'base/stock/stock.html',context)
 
+@login_required(login_url='login')    
+def config(request):
+    if request.method == 'POST':
+        time = request.POST.get('select-time')
+        request.session['time'] = time
+    context={}
+    return render(request, 'base/config/config.html',context)
+
+
+@login_required(login_url='login')    
+def monitored(request):
+    stock_list=request.session['stock_list']
+    all_stocks=stock_options
+    display_list=[]
+    
+    for i in stock_list:
+        for j in all_stocks:
+            if i==j['code']:
+                display_list.append(j) 
+    if request.method == 'POST':
+        stock=request.POST.get('exclude')
+       
+        
+        stock_list=request.session['stock_list']
+        for i in stock_list:
+            if i == stock:
+                stock_list.remove(stock)
+                request.session['stock_list']=stock_list
+                return redirect('monitored')
+    context={'display_list':display_list}
+    return render(request, 'base/monitored/monitored.html',context)
+
+@login_required(login_url='login')    
+def monitored_stock(request,pk):
+
+    selected_stock=None
+    for i in stock_options:
+        if i['code']==str(pk):
+            selected_stock=i
+
+    stock_code=selected_stock['code']
+    time= request.session['time']
+    url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock_code+'&interval='+time+'&outputsize=compact&apikey='+key 
+    r = requests.get(url)
+    data = r.json()
+    new_stock_info=data['Time Series ('+time+')']
+    values=list(new_stock_info.values())[0]
+    alpha={'open':values['1. open'],'high':values['2. high'],'low':values['3. low'],'close':values['4. close']}
+    
+    register_call=Stock(
+            name=selected_stock['name'],
+            symbol=selected_stock['code'],
+            opened=alpha['open'],
+            high=alpha['high'],
+            low=alpha['low'],
+            close=alpha['close'],
+            interval=time)
+    register_call.save()
+    
+    registered=Stock.objects.filter(symbol=pk).values_list('name','symbol','opened','close','high','low','interval','created')
+    reversed_list=[]
+    for i in registered:
+        print(i[2])
+        reversed_list = [i] + reversed_list
+    time=time.replace('min','')
+    stock_info={'info':selected_stock,'alpha':alpha, 'data':data, "time":time[:2], 'registered':reversed_list,
+    'is_added':selected_stock['code'] in request.session['stock_list'], 'size':len(request.session['stock_list'])}
+    context={'stock_info':stock_info}
+    return render(request, 'base/monitored_stock/monitored_stock.html',context)
+
+
+def get_stock(request):
+    stock_code='GGB'
+    time= request.session['time']
+    url = 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+stock_code+'&interval='+time+'&outputsize=compact&apikey='+key 
+
+    api_request=requests.get(url)
+
+    try:
+        api_request.raise_for_status()
+        api_request.json()
+    except:
+        return None

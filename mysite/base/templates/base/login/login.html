@@ -1,18 +1,29 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/login.css' %}" media="screen">
+  <div class="bg-container">
+    <div class="inner-container">
+      <img id='logo' src="../static/images/logo.png" alt="Logo Inoa">
+      <form method="POST" action="">
+      {% csrf_token %}
+      
+      <input type="text" name="username" placeholder="Nome de usuário" >
+      
+      <input type="password" name="password" placeholder="Senha" > 
+      <button type="submit" class="login-btn">
+        Login
+        <img id='arrow' src="../static/images/arrow-right.svg">
+      </button>   
+      
+       <a href="/register"><p id="register-text">Não tem conta ainda? Cadastre-se!</p></a>
+    </form>
+    </div>
+    
+  </div>
+  
+  <!-- {% for message in messages %}
+					<p id="message-login">{{message}}</p>
+				{% endfor %}	 -->
 
-  <!--CTA-->
-  <h1>Login</h1>
-  <form method="POST">
-    {% csrf_token %}
-    <label>Email:</label> 
-    <input type="text" name="email" placeholder="Digite seu email aqui">
-
-    <label>Senha:</label> 
-    <input type="text" name="password" placeholder="Digite sua senha aqui">
-
-    <button type="submit">Logar</button>
-    <p>Don't have an account? <a href="/register">Create an account</a>.</p>
-  </form>
 {% endblock %}

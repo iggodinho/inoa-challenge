@@ -1,2 +1,36 @@
-<a href="/">Logo</a>
-<a href="{% url 'login' %}">Login</a>
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'styles/header.css' %}" media="screen">
+
+<div id="header-container">
+    <div id="header-list">
+        <a href="/">
+            <div class="title-icon">
+                <img class='icons' src="../static/images/home-icon.svg" >
+                <p class="header-title">Página Inicial</p>
+            </div>
+        </a>
+        <a href="{% url 'monitored' %}">
+            <div class="title-icon">
+                <img class='icons' src="../static/images/trend-icon.svg" >
+                <p class="header-title">Ações Monitoradas</p>
+            </div>
+        </a>
+        <a href="{% url 'config' %}">
+            <div class="title-icon">
+                <img class='icons' src="../static/images/gear-icon.svg" >
+                <p class="header-title">Configurações</p>
+            </div>
+        </a>
+        <a href="{% url 'logout' %}">
+            <div class="title-icon">
+                <img class='icons' src="../static/images/logout-icon.svg" >
+                <p class="header-title">Sair</p>
+            </div>
+        </a>
+       
+    </div>
+    
+
+</div>
+

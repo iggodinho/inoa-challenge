@@ -1,0 +1,34 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/monitored.css' %}" />
+
+<div class="bg-container">
+    <p class="section-title">Ações Monitoradas</p>
+    <div class="inner-container">
+        {% if not request.session.stock_list %}
+            <p class="item-text">Lista de monitoramento vazia! Adicione uma ação.</p>
+            <a href="{% url 'home' %}" class="redirect">Ir para a Página Inicial</a>
+
+        {% else %}
+        {% for stock in display_list %}
+        <form class="item" method="POST">
+            {% csrf_token %}
+            <img class="stock-img" src="/static/images/{{stock.image_file}}" alt='{{stock.image_file}}'>
+            <p class="item-text">{{stock.name}}</p>
+            <p class="item-text">{{stock.code}}</p>
+            
+            <button action="submit" name="exclude" value='{{stock.code}}'>
+                <img class="small-icon" src="/static/images/exclude.svg" alt='excluir'>
+            </button>
+            <a href="{% url 'monitored_stock' stock.code %}"><img class="small-icon" src="/static/images/arrow-right.svg" alt='seta'></a>
+        </form>
+        {% endfor %}
+        {% endif %}
+            
+       
+    </div>
+    
+</div>
+
+{% endblock  %}

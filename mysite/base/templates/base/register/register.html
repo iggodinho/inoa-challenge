@@ -1,28 +1,28 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles/login.css' %}" media="screen">
 
-  <div>
-    <h1>Register</h1>
-    <form method="POST">
+<div class="bg-container">
+  <div class="inner-container">
+    <img id='logo' src="../static/images/logo.png" alt="Logo Inoa">
+    <form method="POST" action="">
       {% csrf_token %}
-      <label>Nome:</label> 
-      <input type="text" name="name" placeholder="Digite sua nome aqui">
-
-      <label>Email:</label> 
-      <input type="text" name="email" placeholder="Digite seu email aqui">
-  
-      <label>Senha:</label> 
-      <input type="text" name="password" placeholder="Digite sua senha aqui">
-
-      <label>Confirme a Senha:</label> 
-      <input type="text" name="confirm-password" placeholder="Confirme a senha">
+      <input type="text" name="username" placeholder="Nome de usuário" >
+      <input type="text" name="email" placeholder="Email" >
+      <input type="password" name="password1" placeholder="Senha" >
+      <input type="password" name="password2" placeholder="Confirmar Senha" >
       
-      
-      <button type="submit">Cadastrar</button>
+      <button type="submit" class="login-btn">
+        Cadastrar
+        <img id='arrow' src="../static/images/arrow-right.svg">
+      </button>  
+      <a href="/login"><p id="register-text">Já possui uma conta? Faça o login!</p></a>
+      <!-- {{form.errors}} -->
     </form>
-
-
   </div>
-
+</div>
+  <!-- {% for message in messages %}
+      <p id="message-register">{{message}}</p> -->
+  {% endfor %}
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/monitored_stocks.css' %}" />
+
+<div class="bg-container">
+    <p class="section-title">{{stock_info.info.name}}</p>
+    <img class="stock-img" src="/static/images/{{stock_info.info.image_file}}" alt='{{info.image_file}}'>
+    {% for i in stock_info.registered %}
+    <div class="inner-container">
+        <div class="stock-info-div">
+            <p class="stock-info-title">Abertura:</p>
+            <p>{{i.2}}</p>
+        </div>
+        <div class="stock-info-div">
+            <p class="stock-info-title">Fechamento:</p>
+            <p>{{i.3}}</p>
+        </div>  
+        <div class="stock-info-div">
+            <p class="stock-info-title">Máximo:</p>
+            <p>{{i.4}}</p>
+        </div>
+        <div class="stock-info-div">
+            <p class="stock-info-title">Mínimo:</p>
+            <p>{{i.5}}</p>
+        </div>
+        <div class="stock-info-div">
+            <p class="stock-info-title">Intervalo:</p>
+            <p>{{i.6}}</p>
+        </div>
+    </div>
+    {% endfor %}
+    
+</div>
+
+{% endblock  %}

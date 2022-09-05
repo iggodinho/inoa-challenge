@@ -1,11 +1,29 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static 'style.css' %}" />
-  <!--CTA-->
-  <h1>Hello world!asas</h1>
-  {% for i in stockOptions %}
-    <p>{{i.id}} - <a href="{% url 'selected-stock' i.code %}">{{i.name}}</a></p>
-  {% endfor %}
+<link rel="stylesheet" href="{% static 'styles/home.css' %}" />
+
+<div class="bg-container">
+  <p class="section-title">Lista de ativos</p>
+  <p class="section-subtitle">Clique em um ativo para ver mais informações!</p>
+  <div class="stock-list">
+    {% for i in stock_options %}
+    <a href="{% url 'stock' i.code %}">
+      <div class="stock-option">
+        <div class="stock-img">
+          
+          <img src="../static/images/{{i.image_file}}" alt={{i.image_file}}>
+        </div>
+        <div class="stock-info">
+          <p class="stock-name">{{i.name}}</p>
+          <p class="stock-code">{{i.code}}</p>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+  
 
 {% endblock %}

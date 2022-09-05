@@ -1,0 +1,45 @@
+.bg-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+.section-title{
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom: 0.5px solid #00747C;
+}
+
+.inner-container{
+    margin-top: 20px;
+    width:960px;
+    padding-bottom: 20px;
+    border-bottom: #00747C solid 1px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stock-img{
+    width:200px;
+    border: 0.5px solid #00747C;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.stock-info-div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+}
+
+.stock-info-title{
+    margin-right: 5px;
+    font-weight: bold;
+    
+}

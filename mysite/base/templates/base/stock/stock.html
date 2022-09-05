@@ -1,0 +1,59 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/style.css' %}" />
+
+<div class="bg-container">
+  <p class="section-title">{{selected_stock.info.name}}</p>
+    <img class="stock-img" src="/static/images/{{selected_stock.info.image_file}}" alt='{{selected_stock.info.image_file}}'>
+  
+  <div class="stock-info">
+    <div class="stock-info-div">
+      <p class="stock-info-title">Código:</p>
+      <p>{{selected_stock.info.code}}</p>
+    </div>
+    <div class="stock-info-div">
+      <p class="stock-info-title">Abertura:</p>
+      <p>{{selected_stock.alpha.open}}</p>
+    </div>
+    <div class="stock-info-div">
+      <p class="stock-info-title">Fechamento:</p>
+      <p>{{selected_stock.alpha.close}}</p>
+    </div>
+    <div class="stock-info-div">
+        <p class="stock-info-title">Máximo:</p>
+        <p>{{selected_stock.alpha.high}}</p>
+    </div>
+    <div class="stock-info-div">
+        <p class="stock-info-title">Mínimo:</p>
+        <p>{{selected_stock.alpha.low}}</p>
+    </div>
+    <div class="stock-info-div">
+      <p class="stock-info-title">Intervalo:</p>
+      <p>{{selected_stock.time}} minutos</p>
+    </div>
+    <form method="POST" action="" class="form-div">
+      {% csrf_token %}
+     
+      {% if selected_stock.is_added %}
+        <button type="submit" name="button" class="add-btn" value={{selected_stock.info.code}}>Remover da lista de monitoramento</button>
+      {% else %}
+        {% if selected_stock.size >= 5 %}
+        
+        <p class="stock-info-title">Lista de monitoramento cheia!</p>
+        <a href="{% url 'monitored' %}"class="add-btn">Ir para a lista de monitoramento</a>
+     
+        
+        {% else %}
+        <button type="submit" name="button"  class="add-btn" value={{selected_stock.info.code}}>Adicionar à lista de monitoramento</button>
+        {% endif %}
+      {% endif %}
+
+    </form>
+
+
+  </div> 
+</div>
+  
+
+{% endblock %}
