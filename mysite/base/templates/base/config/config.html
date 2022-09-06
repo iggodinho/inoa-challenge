@@ -2,16 +2,13 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'styles/config.css' %}" />
-
 <div class="bg-container">
     <p class="section-title">Configurações </p>
     <div class="inner-container">
         <p class="section-subtitle">Olá, {{user.username}}!</p>
-        
         <p class="select-title">Selecione a periodicidade de checagem</p>
         <form method="POST" action="">
             {% csrf_token %}
-           
             <select name="select-time">
                 <option value="5min" selected>5 minutos</option>
                 <option value="15min">15 minutos</option>
@@ -21,9 +18,7 @@
         <p class="select-title">Selecionado: {{request.session.time}}</p>
         <button type="submit" class="login-btn">Salvar</button> 
         </form>
-        
-    </div>
-    
+    </div> 
 </div>
 
   
